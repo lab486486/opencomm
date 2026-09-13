@@ -19,9 +19,14 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 const category = getCategory(entry.data.category);
 const canonical = entry.data.canonical ?? entryPath(entry);
-const watchLabel = entry.data.channel
-  ? `${entry.data.channel} 실시간 바로보기`
-  : '실시간 바로보기';
+// Channel guides should label the sticky CTA with the article subject (name),
+// not a possibly-stale channel field copied from another post.
+const watchLabel =
+  entry.data.category === 'channel' && entry.data.name
+    ? `${entry.data.name} 실시간 바로보기`
+    : entry.data.channel
+      ? `${entry.data.channel} 실시간 바로보기`
+      : '실시간 바로보기';
 ---
 
 <Base
@@ -59,6 +64,18 @@ const watchLabel = entry.data.channel
         const gallery = img.closest('.wp-gallery');
         img.remove();
         if (gallery && !gallery.querySelector('img')) gallery.remove();
+      });
+    });
+
+    // WordPress leftover &nbsp; between CTA buttons becomes a grid/flex item and
+    // forces mobile-style stacking on desktop — strip whitespace-only text nodes.
+    document.querySelectorAll('.prose p').forEach((p) => {
+      const buttons = p.querySelectorAll('a.fasc-button, a[style*="background-color"]');
+      if (buttons.length < 2) return;
+      [...p.childNodes].forEach((node) => {
+        if (node.nodeType === Node.TEXT_NODE && /^[\s\u00A0]*$/.test(node.textContent || '')) {
+          node.remove();
+        }
       });
     });
   </script>
