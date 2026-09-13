@@ -11,6 +11,8 @@ pnpm-debug.log*
 .env.production
 drama/.env
 drama/*.log
+__pycache__/
+*.pyc
 
 .DS_Store
 .idea/
