@@ -20,6 +20,7 @@
 
 html {
   background: var(--bg);
+  overflow-x: clip;
 }
 
 body {
@@ -30,6 +31,7 @@ body {
   line-height: 1.65;
   letter-spacing: -0.02em;
   min-height: 100vh;
+  overflow-x: clip;
 }
 
 a {
@@ -56,6 +58,7 @@ textarea {
 .wrap {
   width: min(1100px, calc(100% - 32px));
   margin: 0 auto;
+  max-width: 100%;
 }
 
 .site-header {
@@ -351,6 +354,7 @@ details.faq-item {
   grid-template-columns: minmax(0, 1fr) 300px;
   gap: 28px;
   align-items: start;
+  min-width: 0;
 }
 
 .entry-article {
@@ -359,10 +363,13 @@ details.faq-item {
   border-radius: 18px;
   padding: 28px;
   box-shadow: var(--shadow);
+  min-width: 0;
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 .entry-article .page-title {
-  margin: 0 0 8px;
+  margin: 0 0 24px;
 }
 
 .breadcrumb {
@@ -374,6 +381,10 @@ details.faq-item {
 .prose {
   font-size: 17px;
   line-height: 1.75;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .prose :is(h2, h3) {
@@ -388,13 +399,23 @@ details.faq-item {
 
 .prose table {
   width: 100%;
+  max-width: 100%;
   border-collapse: separate;
   border-spacing: 0;
   margin: 18px 0;
   border: 1px solid #d7dde7;
   border-radius: 12px;
-  overflow: hidden;
+  overflow-x: auto;
+  display: block;
   background: #fff;
+}
+
+.prose thead,
+.prose tbody,
+.prose tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
 }
 
 .prose th,
@@ -420,6 +441,16 @@ details.faq-item {
   display: block;
   margin: 8px auto 6px;
   border-radius: 12px;
+  max-width: 100%;
+  height: auto;
+}
+
+.prose figure,
+.prose .wp-block-image,
+.prose .wp-block-table {
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .prose .wp-gallery,
@@ -480,15 +511,28 @@ details.faq-item {
   text-align: center;
   word-break: keep-all;
   box-shadow: 0 2px 8px rgba(20, 20, 20, 0.08);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  font-size: 16px;
 }
 
 .prose p:has(> a.fasc-button),
 .prose p:has(> a[style*='background-color']) {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  /* PC: 2x1 (side by side). Mobile overrides to 1x2. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  justify-items: stretch;
+  align-items: stretch;
+  width: 100%;
+  max-width: 100%;
+}
+
+.prose p:has(> a.fasc-button):has(> a:only-of-type),
+.prose p:has(> a[style*='background-color']):has(> a:only-of-type) {
+  grid-template-columns: minmax(0, 420px);
   justify-content: center;
-  align-items: center;
-  gap: 10px;
 }
 
 .prose :is(img, .wp-gallery, .wp-block-gallery) + p:has(> a.fasc-button),
@@ -562,6 +606,8 @@ details.faq-item {
   position: sticky;
   bottom: 16px;
   margin-top: 24px;
+  z-index: 20;
+  max-width: 100%;
 }
 
 .watch-bar a {
@@ -570,11 +616,14 @@ details.faq-item {
   justify-content: center;
   gap: 8px;
   width: 100%;
+  max-width: 100%;
   padding: 14px 18px;
   border-radius: 12px;
   background: #e8f0fe;
   border: 3px solid #111;
   font-weight: 800;
+  word-break: keep-all;
+  box-sizing: border-box;
   animation: borderBlink 1.2s infinite;
 }
 
@@ -730,6 +779,20 @@ details.faq-item {
 
   .prose table {
     font-size: 15px;
+  }
+
+  /* 모바일: 다운로드 버튼 1x2 (세로 스택) */
+  .prose p:has(> a.fasc-button),
+  .prose p:has(> a[style*='background-color']) {
+    grid-template-columns: 1fr;
+  }
+
+  .entry-article {
+    padding: 20px 16px;
+  }
+
+  .entry-article .page-title {
+    margin: 0 0 22px;
   }
 }
 
