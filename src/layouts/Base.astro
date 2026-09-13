@@ -2,9 +2,6 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import NavTabs from '../components/NavTabs.astro';
-import { categories } from '../lib/categories';
-import { getListedShows } from '../lib/shows';
 import { site } from '../data/site';
 
 interface Props {
@@ -13,7 +10,6 @@ interface Props {
   canonical?: string;
   image?: string;
   noindex?: boolean;
-  folder?: string;
 }
 
 const {
@@ -22,18 +18,10 @@ const {
   canonical,
   image,
   noindex = false,
-  folder,
 } = Astro.props;
 
 const pageTitle = title ? `${title} - ${site.name}` : `${site.name} 통합 검색`;
 const canonicalUrl = new URL(canonical ?? Astro.url.pathname, site.url).href;
-const listed = noindex ? [] : await getListedShows();
-const counts = Object.fromEntries(
-  categories.map((category) => [
-    category.slug,
-    listed.filter((entry) => entry.data.category === category.slug).length,
-  ]),
-);
 ---
 
 <!doctype html>
@@ -46,6 +34,10 @@ const counts = Object.fromEntries(
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    {!noindex && <link rel="sitemap" href="/sitemap.xml" />}
+    {!noindex && (
+      <link rel="alternate" type="application/rss+xml" title={site.name} href="/rss" />
+    )}
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
@@ -64,11 +56,6 @@ const counts = Object.fromEntries(
   </head>
   <body>
     <Header />
-    {!noindex && (
-      <div class="wrap">
-        <NavTabs current={folder} counts={counts} />
-      </div>
-    )}
     <main class="main">
       <div class="wrap">
         <slot />

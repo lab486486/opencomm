@@ -9,7 +9,6 @@ import {
   faqs,
   popularQueries,
   scheduleLinks,
-  site,
 } from '../data/site';
 import { getFeaturedShows, getListedShows } from '../lib/shows';
 
@@ -18,11 +17,15 @@ const featured = await getFeaturedShows();
 const latest = listed.filter((entry) => entry.data.category !== 'archive').slice(0, 8);
 ---
 
-<Base folder="all">
+<Base>
   <section class="hero">
     <p class="kicker">ON AIR</p>
     <h1>온에어Live 통합 검색</h1>
-    <p class="lede">{site.description}</p>
+    <p class="lede">
+      공중파 3사와 종편, tvN, ENA까지 공식 온에어 주소와 편성 정보를 모아 안내합니다.{' '}
+      <br class="lede-break" />
+      영상은 직접 송출하지 않습니다.
+    </p>
     <SearchBox autofocus />
     <div class="chips">
       {popularQueries.map((item) => (
@@ -52,7 +55,7 @@ const latest = listed.filter((entry) => entry.data.category !== 'archive').slice
 
   <section class="section">
     <div class="section-head">
-      <h2>TV편성표 [오늘 뭐해?]</h2>
+      <h2>TV편성표</h2>
     </div>
     <div class="schedule-grid">
       {scheduleLinks.map((item) => (

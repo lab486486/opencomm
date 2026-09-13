@@ -17,7 +17,7 @@ if (!category) {
 const entries = await getShowsByCategory(category.slug);
 ---
 
-<Base title={category.name} description={category.description} folder={category.slug}>
+<Base title={category.name} description={category.description}>
   <section class="hero">
     <p class="breadcrumb"><a href="/">온에어 Live</a> / {category.name}</p>
     <h1 class="page-title">{category.name}</h1>

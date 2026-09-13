@@ -7,7 +7,10 @@ const SHOWS_DIR = path.join(ROOT, 'src', 'content', 'shows');
 const REDIRECTS = path.join(ROOT, 'public', '_redirects');
 const SHORTLINKS = path.join(ROOT, 'public', 'shortlinks.json');
 
-const MANUAL_REDIRECTS = `/category/drama /category/drama/ 301
+const MANUAL_REDIRECTS = `/rss/ /rss 301
+/rss.xml /rss 301
+/rss.xml/ /rss 301
+/category/drama /category/drama/ 301
 /category/드라마 /category/drama/ 301
 /category/%eb%93%9c%eb%9d%bc%eb%a7%88 /category/drama/ 301
 /category/sport /category/sport/ 301
@@ -105,12 +108,6 @@ async function main() {
     shortlinks[post.id] = dest;
     lines.push(`/p/${post.id} ${dest} 301`);
     lines.push(`/p/${post.id}/ ${dest} 301`);
-    const encoded = encodeURI(dest);
-    const encodedLower = encoded.replace(/%[0-9A-F]{2}/g, (part) => part.toLowerCase());
-    if (encoded !== dest) lines.push(`${encoded} ${dest} 301`);
-    if (encodedLower !== dest && encodedLower !== encoded) {
-      lines.push(`${encodedLower} ${dest} 301`);
-    }
   }
   lines.push('');
 
