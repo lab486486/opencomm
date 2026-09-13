@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { cardImage } from '../lib/images';
 import { categoryLabel, entryPath, getListedShows, showDate } from '../lib/shows';
 
 export const GET: APIRoute = async () => {
@@ -11,7 +12,7 @@ export const GET: APIRoute = async () => {
     category: categoryLabel(entry),
     channel: entry.data.channel ?? '',
     date: showDate(entry),
-    thumbnail: entry.data.thumbnail,
+    thumbnail: cardImage(entry.data.thumbnail),
     tags: entry.data.tags,
   }));
 

@@ -10,6 +10,7 @@ import {
   popularQueries,
   scheduleLinks,
 } from '../data/site';
+import { cardImage } from '../lib/images';
 import { getFeaturedShows, getListedShows } from '../lib/shows';
 
 const listed = await getListedShows();
@@ -17,7 +18,7 @@ const featured = await getFeaturedShows();
 const latest = listed.filter((entry) => entry.data.category !== 'archive').slice(0, 8);
 ---
 
-<Base>
+<Base preloadImage={cardImage(featured[0]?.data.thumbnail)}>
   <section class="hero">
     <p class="kicker">ON AIR</p>
     <h1>온에어Live 통합 검색</h1>
@@ -88,8 +89,8 @@ const latest = listed.filter((entry) => entry.data.category !== 'archive').slice
         <p>{listed.length}편</p>
       </div>
       <div class="show-grid">
-        {featured.map((entry) => (
-          <ShowCard entry={entry} />
+        {featured.map((entry, index) => (
+          <ShowCard entry={entry} priority={index === 0} />
         ))}
       </div>
     </section>

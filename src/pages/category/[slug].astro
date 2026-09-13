@@ -26,8 +26,8 @@ const entries = await getShowsByCategory(category.slug);
   <section class="section">
     {entries.length > 0 ? (
       <div class="show-grid">
-        {entries.map((entry) => (
-          <ShowCard entry={entry} />
+        {entries.map((entry, index) => (
+          <ShowCard entry={entry} priority={index === 0} />
         ))}
       </div>
     ) : (

@@ -10,7 +10,8 @@
   --accent-soft: #eef5ff;
   --shadow: 0 8px 28px rgba(20, 20, 20, 0.06);
   --radius: 14px;
-  --sans: Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
+  --sans: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic',
+    sans-serif;
 }
 
 * {
@@ -98,14 +99,8 @@ textarea {
 }
 
 @keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(229, 9, 20, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(229, 9, 20, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(229, 9, 20, 0);
+  50% {
+    opacity: 0.72;
   }
 }
 
@@ -125,7 +120,7 @@ textarea {
 
 .kicker {
   margin: 0 0 10px;
-  color: var(--live);
+  color: #b50d16;
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.08em;
