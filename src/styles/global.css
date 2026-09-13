@@ -414,8 +414,7 @@ details.faq-item {
 .prose .aligncenter,
 .prose .wp-gallery-image {
   display: block;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 18px auto;
   border-radius: 12px;
 }
 
@@ -423,7 +422,7 @@ details.faq-item {
 .prose .wp-block-gallery {
   display: grid;
   gap: 12px;
-  margin: 20px auto;
+  margin: 24px auto;
   max-width: 920px;
 }
 
@@ -448,6 +447,14 @@ details.faq-item {
   border-radius: 12px;
 }
 
+/* Keep breathing room when a CTA sits right under media or a table */
+.prose :is(img, .wp-gallery, .wp-block-gallery, table) + p:has(> a.fasc-button),
+.prose :is(img, .wp-gallery, .wp-block-gallery, table) + p:has(> a.myButton),
+.prose :is(img, .wp-gallery, .wp-block-gallery, table) + p:has(> a[style*='background-color']) {
+  margin-top: 10px;
+  padding-top: 14px;
+}
+
 .prose blockquote {
   margin: 22px 0;
   padding: 16px 18px;
@@ -465,6 +472,7 @@ details.faq-item {
 }
 
 .prose a.fasc-button,
+.prose a.myButton,
 .prose a[style*='background-color'] {
   display: inline-flex;
   align-items: center;
@@ -479,16 +487,24 @@ details.faq-item {
   box-shadow: 0 2px 8px rgba(20, 20, 20, 0.08);
 }
 
+.prose a.myButton {
+  background: var(--accent);
+  color: #fff;
+}
+
 .prose p:has(> a.fasc-button),
+.prose p:has(> a.myButton),
 .prose p:has(> a[style*='background-color']) {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  margin-bottom: 18px;
 }
 
 .prose a.fasc-button:hover,
+.prose a.myButton:hover,
 .prose a[style*='background-color']:hover {
   color: inherit;
   filter: brightness(0.96);
