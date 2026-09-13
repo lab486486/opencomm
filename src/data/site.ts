@@ -1,18 +1,15 @@
 export const site = {
   name: '온에어 Live',
   tagline: '실시간 드라마 · 예능 · 스포츠 방송 안내',
-  description:
-    '공중파 3사와 종편, tvN, ENA까지 공식 온에어 주소와 편성 정보를 모아 안내합니다. 영상은 직접 송출하지 않습니다.',
+  description: '공중파 3사와 종편, tvN, ENA까지 공식 온에어 주소와 편성 정보를 모아 안내합니다.',
   url: 'https://opencomm.net',
   imageBase: import.meta.env.PUBLIC_IMAGE_BASE ?? '',
 };
 
 export const popularQueries = [
-  { label: '신병4', query: '신병' },
-  { label: '재벌형사2', query: '재벌형사' },
-  { label: 'SBS 온에어', query: 'SBS' },
-  { label: 'tvN', query: 'tvN' },
-  { label: '월드컵', query: '월드컵' },
+  { label: 'SBS온에어', query: 'SBS온에어' },
+  { label: 'ENA온에어', query: 'ENA온에어' },
+  { label: 'tvN온에어', query: 'tvN온에어' },
 ];
 
 export const channels = [

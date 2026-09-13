@@ -6,7 +6,7 @@ import RelatedShows from '../components/RelatedShows.astro';
 import WatchBar from '../components/WatchBar.astro';
 import FaqEnhance from '../components/FaqEnhance.astro';
 import { getCategory } from '../lib/categories';
-import { entryPath, getRelatedShows, getShows } from '../lib/shows';
+import { entryPath, getRelatedShows, getShows, pageDescription } from '../lib/shows';
 
 export async function getStaticPaths() {
   const entries = await getShows();
@@ -28,7 +28,7 @@ const watchLabel = entry.data.channel
 
 <Base
   title={entry.data.title}
-  description={entry.data.excerpt ?? entry.data.title}
+  description={pageDescription(entry)}
   canonical={canonical}
   image={entry.data.thumbnail}
 >
@@ -44,7 +44,6 @@ const watchLabel = entry.data.channel
         / {entry.data.name}
       </p>
       <h1 class="page-title">{entry.data.title}</h1>
-      {entry.data.excerpt && <p class="lede">{entry.data.excerpt}</p>}
       <div class="ad-inarticle">
         <AdSlot adSlot="5384795752" label="본문 중간" />
       </div>
@@ -61,4 +60,13 @@ const watchLabel = entry.data.channel
 
   {entry.data.watchUrl && <WatchBar href={entry.data.watchUrl} label={watchLabel} />}
   <FaqEnhance />
+  <script>
+    document.querySelectorAll('.prose img').forEach((img) => {
+      img.addEventListener('error', () => {
+        const gallery = img.closest('.wp-gallery');
+        img.remove();
+        if (gallery && !gallery.querySelector('img')) gallery.remove();
+      });
+    });
+  </script>
 </Base>

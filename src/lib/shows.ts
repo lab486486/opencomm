@@ -48,3 +48,20 @@ export function showDate(entry: ShowEntry) {
 export function byName(entries: ShowEntry[]) {
   return [...entries].sort((a, b) => a.data.name.localeCompare(b.data.name, 'ko'));
 }
+
+export function pageDescription(entry: ShowEntry) {
+  const text = String(entry.body ?? '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/!\[[^\]]*]\([^)]+\)/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const sentences = text.match(/[^.!?。！？]+[.!?。！？]/g) ?? [];
+  let out = '';
+  for (const sentence of sentences) {
+    const next = `${out}${sentence}`.trim();
+    if (next.length > 160 && out) break;
+    out = next;
+    if (out.length >= 90) break;
+  }
+  return out || entry.data.title;
+}

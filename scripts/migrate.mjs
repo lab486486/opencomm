@@ -1,5 +1,6 @@
 import { access, mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { expandGalleries, toLocalSrc } from './wp-content.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const DEFAULT_XML = path.join(ROOT, 'live.WordPress.2026-09-13.xml');
@@ -235,6 +236,9 @@ async function main() {
     if (tag(block, 'wp:post_type') !== 'attachment') continue;
     attachments.set(tag(block, 'wp:post_id'), tag(block, 'wp:attachment_url') || tag(block, 'guid'));
   }
+  const attachmentIndex = Object.fromEntries(
+    [...attachments].map(([id, url]) => [id, { src: toLocalSrc(url) || url, alt: '' }]),
+  );
 
   const prepared = [];
   for (const block of parseItems(xml)) {
@@ -249,7 +253,10 @@ async function main() {
     const wpCats = [...block.matchAll(/<category domain="category"[^>]*nicename="([^"]*)"/g)].map(
       (match) => decodeSlug(match[1]),
     );
-    const html = await rewriteImages(cleanHtml(tag(block, 'content:encoded')));
+    const html = expandGalleries(
+      await rewriteImages(cleanHtml(tag(block, 'content:encoded'))),
+      attachmentIndex,
+    );
     const thumbId = block.match(/<wp:meta_key><!\[CDATA\[_thumbnail_id\]\]><\/wp:meta_key>\s*<wp:meta_value><!\[CDATA\[(\d+)\]\]>/);
     const featuredUrl = thumbId ? attachments.get(thumbId[1]) : '';
     const firstImg = html.match(/src=["']([^"']+)["']/);
