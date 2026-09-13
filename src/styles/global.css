@@ -452,8 +452,8 @@ details.faq-item {
 .prose :is(img, .wp-gallery, .wp-block-gallery, table) + p:has(> a.fasc-button),
 .prose :is(img, .wp-gallery, .wp-block-gallery, table) + p:has(> a.myButton),
 .prose :is(img, .wp-gallery, .wp-block-gallery, table) + p:has(> a[style*='background-color']) {
-  margin-top: 8px;
-  padding-top: 24px;
+  margin-top: 12px;
+  padding-top: 32px;
 }
 
 .prose blockquote {
