@@ -348,7 +348,7 @@ details.faq-item {
 
 .entry-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
+  grid-template-columns: minmax(0, 1fr) 300px;
   gap: 28px;
   align-items: start;
 }
@@ -359,6 +359,10 @@ details.faq-item {
   border-radius: 18px;
   padding: 28px;
   box-shadow: var(--shadow);
+}
+
+.entry-article .page-title {
+  margin: 0 0 8px;
 }
 
 .breadcrumb {
@@ -414,8 +418,7 @@ details.faq-item {
 .prose .aligncenter,
 .prose .wp-gallery-image {
   display: block;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 8px auto 6px;
   border-radius: 12px;
 }
 
@@ -423,7 +426,7 @@ details.faq-item {
 .prose .wp-block-gallery {
   display: grid;
   gap: 12px;
-  margin: 20px auto;
+  margin: 20px auto 8px;
   max-width: 920px;
 }
 
@@ -488,6 +491,11 @@ details.faq-item {
   gap: 10px;
 }
 
+.prose :is(img, .wp-gallery, .wp-block-gallery) + p:has(> a.fasc-button),
+.prose :is(img, .wp-gallery, .wp-block-gallery) + p:has(> a[style*='background-color']) {
+  margin-top: 22px;
+}
+
 .prose a.fasc-button:hover,
 .prose a[style*='background-color']:hover {
   color: inherit;
@@ -512,9 +520,15 @@ details.faq-item {
   border-radius: 12px;
 }
 
-.related-sidebar {
+.related-sidebar,
+.entry-sidebar {
   position: sticky;
   top: 84px;
+}
+
+.entry-sidebar .ad-slot {
+  min-height: 600px;
+  margin: 0;
 }
 
 .related-card {
@@ -725,8 +739,13 @@ details.faq-item {
     grid-template-columns: 1fr;
   }
 
-  .related-sidebar {
+  .related-sidebar,
+  .entry-sidebar {
     position: static;
+  }
+
+  .entry-sidebar {
+    display: none;
   }
 
   .footer-inner,

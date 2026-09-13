@@ -2,11 +2,10 @@
 import { render } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import AdSlot from '../components/AdSlot.astro';
-import RelatedShows from '../components/RelatedShows.astro';
 import WatchBar from '../components/WatchBar.astro';
 import FaqEnhance from '../components/FaqEnhance.astro';
 import { getCategory } from '../lib/categories';
-import { entryPath, getRelatedShows, getShows, pageDescription } from '../lib/shows';
+import { entryPath, getShows, pageDescription } from '../lib/shows';
 
 export async function getStaticPaths() {
   const entries = await getShows();
@@ -18,7 +17,6 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const related = await getRelatedShows(entry);
 const category = getCategory(entry.data.category);
 const canonical = entry.data.canonical ?? entryPath(entry);
 const watchLabel = entry.data.channel
@@ -44,18 +42,13 @@ const watchLabel = entry.data.channel
         / {entry.data.name}
       </p>
       <h1 class="page-title">{entry.data.title}</h1>
-      <div class="ad-inarticle">
-        <AdSlot adSlot="5384795752" label="본문 중간" />
-      </div>
       <div class="prose">
         <Content />
       </div>
     </article>
-    <RelatedShows
-      title={category?.name ?? '관련 글'}
-      slug={category?.slug}
-      entries={related}
-    />
+    <aside class="entry-sidebar" aria-label="광고">
+      <AdSlot adSlot="7907017315" label="오픈컴 Sidebar PC" width={300} height={600} />
+    </aside>
   </div>
 
   {entry.data.watchUrl && <WatchBar href={entry.data.watchUrl} label={watchLabel} />}
