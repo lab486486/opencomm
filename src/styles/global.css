@@ -414,7 +414,7 @@ details.faq-item {
 .prose .aligncenter,
 .prose .wp-gallery-image {
   display: block;
-  margin: 18px auto;
+  margin: 20px auto;
   border-radius: 12px;
 }
 
@@ -422,7 +422,7 @@ details.faq-item {
 .prose .wp-block-gallery {
   display: grid;
   gap: 12px;
-  margin: 24px auto;
+  margin: 28px auto;
   max-width: 920px;
 }
 
@@ -447,12 +447,13 @@ details.faq-item {
   border-radius: 12px;
 }
 
-/* Keep breathing room when a CTA sits right under media or a table */
+/* Keep breathing room when a CTA sits right under media or a table.
+   Use padding (not only margin) so spacing is not lost to margin collapse. */
 .prose :is(img, .wp-gallery, .wp-block-gallery, table) + p:has(> a.fasc-button),
 .prose :is(img, .wp-gallery, .wp-block-gallery, table) + p:has(> a.myButton),
 .prose :is(img, .wp-gallery, .wp-block-gallery, table) + p:has(> a[style*='background-color']) {
-  margin-top: 10px;
-  padding-top: 14px;
+  margin-top: 8px;
+  padding-top: 24px;
 }
 
 .prose blockquote {
