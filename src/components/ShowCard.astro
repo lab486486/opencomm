@@ -1,0 +1,23 @@
+---
+import { categoryLabel, entryPath, showDate, type ShowEntry } from '../lib/shows';
+
+interface Props {
+  entry: ShowEntry;
+}
+
+const { entry } = Astro.props;
+---
+
+<article class="show-card">
+  <a class="card-link" href={entryPath(entry)}>
+    {entry.data.thumbnail && (
+      <div class="show-thumb">
+        <img src={entry.data.thumbnail} alt="" width="640" height="400" />
+      </div>
+    )}
+    <div class="show-body">
+      <p class="meta">{categoryLabel(entry)} · {entry.data.channel || showDate(entry)}</p>
+      <h3>{entry.data.name}</h3>
+    </div>
+  </a>
+</article>

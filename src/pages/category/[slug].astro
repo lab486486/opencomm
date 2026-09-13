@@ -1,0 +1,37 @@
+---
+import Base from '../../layouts/Base.astro';
+import ShowCard from '../../components/ShowCard.astro';
+import { categories, getCategory } from '../../lib/categories';
+import { getShowsByCategory } from '../../lib/shows';
+
+export function getStaticPaths() {
+  return categories.map((category) => ({ params: { slug: category.slug } }));
+}
+
+const { slug } = Astro.params;
+const category = getCategory(slug!);
+if (!category) {
+  throw new Error(`Unknown category: ${slug}`);
+}
+
+const entries = await getShowsByCategory(category.slug);
+---
+
+<Base title={category.name} description={category.description} folder={category.slug}>
+  <section class="hero">
+    <p class="breadcrumb"><a href="/">온에어 Live</a> / {category.name}</p>
+    <h1 class="page-title">{category.name}</h1>
+    <p class="lede">{category.description}. {entries.length}개 글.</p>
+  </section>
+  <section class="section">
+    {entries.length > 0 ? (
+      <div class="show-grid">
+        {entries.map((entry) => (
+          <ShowCard entry={entry} />
+        ))}
+      </div>
+    ) : (
+      <p class="muted">이 분류에 아직 글이 없습니다.</p>
+    )}
+  </section>
+</Base>

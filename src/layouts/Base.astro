@@ -1,0 +1,79 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import NavTabs from '../components/NavTabs.astro';
+import { categories } from '../lib/categories';
+import { getListedShows } from '../lib/shows';
+import { site } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  image?: string;
+  noindex?: boolean;
+  folder?: string;
+}
+
+const {
+  title,
+  description = site.description,
+  canonical,
+  image,
+  noindex = false,
+  folder,
+} = Astro.props;
+
+const pageTitle = title ? `${title} - ${site.name}` : `${site.name} 통합 검색`;
+const canonicalUrl = new URL(canonical ?? Astro.url.pathname, site.url).href;
+const listed = noindex ? [] : await getListedShows();
+const counts = Object.fromEntries(
+  categories.map((category) => [
+    category.slug,
+    listed.filter((entry) => entry.data.category === category.slug).length,
+  ]),
+);
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    {image && <meta property="og:image" content={new URL(image, site.url).href} />}
+    {!noindex && (
+      <script
+        async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8094444885520451"
+        crossorigin="anonymous"></script>
+    )}
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
+    />
+  </head>
+  <body>
+    <Header />
+    {!noindex && (
+      <div class="wrap">
+        <NavTabs current={folder} counts={counts} />
+      </div>
+    )}
+    <main class="main">
+      <div class="wrap">
+        <slot />
+      </div>
+    </main>
+    <Footer />
+  </body>
+</html>

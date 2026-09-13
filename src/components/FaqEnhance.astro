@@ -1,0 +1,33 @@
+<script>
+  function youtubeId(url: string) {
+    const match = url.match(/(?:youtu\.be\/|v=|embed\/)([A-Za-z0-9_-]{11})/);
+    return match?.[1];
+  }
+
+  function enhanceEmbeds() {
+    const prose = document.querySelector('.prose');
+    if (!prose) return;
+    const walker = document.createTreeWalker(prose, NodeFilter.SHOW_TEXT);
+    const nodes: Text[] = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode as Text);
+    for (const node of nodes) {
+      const text = node.nodeValue ?? '';
+      const match = text.match(/\[embed\](https?:\/\/[^\s\]]+)\[\/embed\]/i);
+      if (!match) continue;
+      const id = youtubeId(match[1]);
+      const wrap = document.createElement('div');
+      if (id) {
+        wrap.innerHTML = `<iframe class="youtube-embed" src="https://www.youtube.com/embed/${id}" title="YouTube" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+      } else {
+        wrap.innerHTML = `<p><a href="${match[1]}" rel="noopener noreferrer" target="_blank">영상 보기</a></p>`;
+      }
+      node.parentNode?.replaceChild(wrap, node);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', enhanceEmbeds, { once: true });
+  } else {
+    enhanceEmbeds();
+  }
+</script>

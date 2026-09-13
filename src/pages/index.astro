@@ -1,0 +1,132 @@
+---
+import Base from '../layouts/Base.astro';
+import SearchBox from '../components/SearchBox.astro';
+import ShowCard from '../components/ShowCard.astro';
+import {
+  athleteQueries,
+  channels,
+  entertainmentRecaps,
+  faqs,
+  popularQueries,
+  scheduleLinks,
+  site,
+} from '../data/site';
+import { getFeaturedShows, getListedShows } from '../lib/shows';
+
+const listed = await getListedShows();
+const featured = await getFeaturedShows();
+const latest = listed.filter((entry) => entry.data.category !== 'archive').slice(0, 8);
+---
+
+<Base folder="all">
+  <section class="hero">
+    <p class="kicker">ON AIR</p>
+    <h1>온에어Live 통합 검색</h1>
+    <p class="lede">{site.description}</p>
+    <SearchBox autofocus />
+    <div class="chips">
+      {popularQueries.map((item) => (
+        <a class="chip" href={`/search/?q=${encodeURIComponent(item.query)}`}>{item.label}</a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>무료 실시간 방송 모아보기</h2>
+      <p>{channels.length}개 채널</p>
+    </div>
+    <div class="channel-grid">
+      {channels.map((channel) => (
+        <a
+          class="channel-card"
+          href={channel.href}
+          rel={channel.external ? 'noopener noreferrer' : undefined}
+          target={channel.external ? '_blank' : undefined}
+        >
+          {channel.name}
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>TV편성표 [오늘 뭐해?]</h2>
+    </div>
+    <div class="schedule-grid">
+      {scheduleLinks.map((item) => (
+        <a class="schedule-card" href={item.href} rel="noopener noreferrer" target="_blank">
+          <small>{item.group}</small>
+          <strong>{item.label}</strong>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>실시간 인기 검색</h2>
+    </div>
+    <div class="athlete-grid">
+      {athleteQueries.map((item) => (
+        <a class="athlete-card" href={`/search/?q=${encodeURIComponent(item.query)}`}>
+          <p class="card-meta">{item.sub}</p>
+          <strong>{item.label}</strong>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  {latest.length > 0 && (
+    <section class="section">
+      <div class="section-head">
+        <h2>최근 방송 안내</h2>
+        <p>{listed.length}편</p>
+      </div>
+      <div class="show-grid">
+        {featured.map((entry) => (
+          <ShowCard entry={entry} />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="section">
+    <div class="section-head">
+      <h2>실시간 인기 예능 다시보기</h2>
+    </div>
+    <div class="chips" style="justify-content:flex-start;">
+      {entertainmentRecaps.map((item) => (
+        <a class="chip" href={item.href} rel="noopener noreferrer" target="_blank">{item.name}</a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>자주 하는 질문</h2>
+    </div>
+    <div class="faq-list">
+      {faqs.map((item) => (
+        <details class="faq-item">
+          <summary>{item.q}</summary>
+          <p>{item.a}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<script>
+  const postId = new URLSearchParams(window.location.search).get('p');
+  if (postId) {
+    fetch('/shortlinks.json')
+      .then((response) => response.json())
+      .then((map: Record<string, string>) => {
+        const dest = map[postId];
+        if (dest) window.location.replace(dest);
+      })
+      .catch(() => undefined);
+  }
+</script>

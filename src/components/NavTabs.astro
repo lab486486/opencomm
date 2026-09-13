@@ -1,0 +1,23 @@
+---
+import { categories } from '../lib/categories';
+
+interface Props {
+  current?: string;
+  counts?: Record<string, number>;
+}
+
+const { current = 'all', counts = {} } = Astro.props;
+---
+
+<nav class="nav-tabs" aria-label="분류">
+  <a class:list={['nav-tab', { 'is-current': current === 'all' }]} href="/">홈</a>
+  {categories.map((category) => (
+    <a
+      class:list={['nav-tab', { 'is-current': current === category.slug }]}
+      href={`/category/${category.slug}/`}
+    >
+      {category.name}
+      {typeof counts[category.slug] === 'number' ? ` ${counts[category.slug]}` : ''}
+    </a>
+  ))}
+</nav>
