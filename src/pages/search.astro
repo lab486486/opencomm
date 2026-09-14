@@ -41,7 +41,9 @@ import SearchBox from '../components/SearchBox.astro';
     const thumb = item.thumbnail
       ? `<div class="show-thumb"><img src="${item.thumbnail}" alt="" width="640" height="400" loading="lazy" decoding="async" /></div>`
       : '';
-    return `<article class="show-card"><a class="card-link" href="${item.href}">${thumb}<div class="show-body"><p class="meta">${item.category}${item.channel ? ` · ${item.channel}` : ''}</p><h3>${item.name}</h3></div></a></article>`;
+    // Search results show the full post title; homepage cards keep using short names.
+    const heading = item.title || item.name;
+    return `<article class="show-card"><a class="card-link" href="${item.href}">${thumb}<div class="show-body"><p class="meta">${item.category}${item.channel ? ` · ${item.channel}` : ''}</p><h3>${heading}</h3></div></a></article>`;
   }
 
   const index = (await fetch('/search-index.json').then((response) => response.json())) as Item[];
