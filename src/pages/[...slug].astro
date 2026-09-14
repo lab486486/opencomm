@@ -3,11 +3,14 @@ import { render } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import AdSlot from '../components/AdSlot.astro';
 import InArticleHeadingAd from '../components/InArticleHeadingAd.astro';
-import InternalLinkCards from '../components/InternalLinkCards.astro';
 import WatchBar from '../components/WatchBar.astro';
 import FaqEnhance from '../components/FaqEnhance.astro';
 import { getCategory } from '../lib/categories';
-import { buildInternalLinkCatalog, cardsForBody } from '../lib/internalLinkCards';
+import {
+  buildInternalLinkCatalog,
+  cardsForBody,
+  injectInternalLinkCards,
+} from '../lib/internalLinkCards';
 import { entryPath, getShows, pageDescription } from '../lib/shows';
 
 export async function getStaticPaths() {
@@ -23,7 +26,10 @@ const { Content } = await render(entry);
 const category = getCategory(entry.data.category);
 const canonical = entry.data.canonical ?? entryPath(entry);
 const allShows = await getShows();
-const internalLinkCards = cardsForBody(String(entry.body ?? ''), buildInternalLinkCatalog(allShows));
+const rawBody = String(entry.body ?? '');
+const internalLinkCards = cardsForBody(rawBody, buildInternalLinkCatalog(allShows));
+const proseHtml = injectInternalLinkCards(rawBody, internalLinkCards);
+const useInjectedHtml = Object.keys(internalLinkCards).length > 0;
 // Channel guides should label the sticky CTA with the article subject (name),
 // not a possibly-stale channel field copied from another post.
 const watchLabel =
@@ -52,9 +58,13 @@ const watchLabel =
         / {entry.data.name}
       </p>
       <h1 class="page-title">{entry.data.title}</h1>
-      <div class="prose">
-        <Content />
-      </div>
+      {useInjectedHtml ? (
+        <div class="prose" set:html={proseHtml} />
+      ) : (
+        <div class="prose">
+          <Content />
+        </div>
+      )}
     </article>
     <aside class="entry-sidebar" aria-label="광고">
       <AdSlot adSlot="7907017315" label="오픈컴 Sidebar PC" width={300} height={600} />
@@ -63,7 +73,6 @@ const watchLabel =
 
   {entry.data.watchUrl && <WatchBar href={entry.data.watchUrl} label={watchLabel} />}
   <InArticleHeadingAd />
-  <InternalLinkCards cards={internalLinkCards} />
   <FaqEnhance />
   <script>
     document.querySelectorAll('.prose img').forEach((img) => {
