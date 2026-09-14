@@ -443,6 +443,71 @@ details.faq-item {
   background: #f8fafc;
 }
 
+/* Drama info: keep real table layout (prose tables are display:block by default) */
+.prose table.drama-info-wrap,
+.prose table.drama-info-grid,
+.prose table.cast-grid {
+  display: table;
+  width: 100%;
+  max-width: 100%;
+  border: 0;
+  border-radius: 0;
+  margin: 0;
+  overflow: visible;
+  background: transparent;
+  box-shadow: none;
+}
+
+.prose table.drama-info-wrap {
+  margin: 24px 0;
+  border: 1px solid #f0f0f0;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+}
+
+.prose table.drama-info-wrap > :is(thead, tbody),
+.prose table.drama-info-grid > :is(thead, tbody),
+.prose table.cast-grid > :is(thead, tbody) {
+  display: table-row-group;
+  width: auto;
+}
+
+.prose table.drama-info-wrap tr,
+.prose table.drama-info-grid tr,
+.prose table.cast-grid tr {
+  display: table-row;
+  width: auto;
+}
+
+.prose table.drama-info-wrap td,
+.prose table.drama-info-grid td,
+.prose table.cast-grid td {
+  border: 0;
+  text-align: left;
+}
+
+.prose table.drama-info-wrap tbody tr:nth-child(even),
+.prose table.drama-info-grid tbody tr:nth-child(even),
+.prose table.cast-grid tbody tr:nth-child(even) {
+  background: transparent;
+}
+
+.prose table.drama-info-grid {
+  table-layout: fixed;
+  border-collapse: separate;
+}
+
+.prose table.cast-grid {
+  margin: 16px 0;
+  table-layout: fixed;
+  border-collapse: separate;
+}
+
 .prose img,
 .prose .aligncenter,
 .prose .wp-gallery-image {
@@ -806,6 +871,105 @@ details.faq-item {
 
   .entry-article .page-title {
     margin: 0 0 22px;
+  }
+
+  /*
+   * Drama info: thumbnail on top, then full-width label|value rows.
+   * (Side-by-side 2x2 cards are unreadable on narrow screens.)
+   */
+  .prose table.drama-info-wrap,
+  .prose table.drama-info-wrap > :is(thead, tbody),
+  .prose table.drama-info-wrap tr {
+    display: block;
+    width: 100%;
+  }
+
+  .prose table.drama-info-wrap td.drama-info-thumb,
+  .prose table.drama-info-wrap td.drama-info-right {
+    display: block;
+    width: 100% !important;
+  }
+
+  .prose table.drama-info-wrap td.drama-info-thumb {
+    text-align: center;
+    padding: 16px 16px 10px !important;
+  }
+
+  .prose table.drama-info-wrap td.drama-info-thumb img {
+    width: 100% !important;
+    max-width: 280px !important;
+    height: auto !important;
+    margin: 0 auto;
+  }
+
+  .prose table.drama-info-wrap td.drama-info-right {
+    padding: 0 !important;
+  }
+
+  .prose table.drama-info-grid,
+  .prose table.drama-info-grid > :is(thead, tbody),
+  .prose table.drama-info-grid tr {
+    display: block;
+    width: 100%;
+  }
+
+  .prose table.drama-info-grid {
+    border-top: 1px solid #e8eaed;
+    border-spacing: 0 !important;
+  }
+
+  .prose table.drama-info-grid td {
+    display: flex !important;
+    align-items: stretch;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    border: 0 !important;
+    border-bottom: 1px solid #e8eaed !important;
+    border-radius: 0 !important;
+    box-sizing: border-box;
+  }
+
+  .prose table.drama-info-grid td > div:first-child {
+    flex: 0 0 5.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 !important;
+    padding: 12px 8px !important;
+    background: #f3f5f8;
+    color: #333;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    text-align: center;
+    word-break: keep-all;
+    border-right: 1px solid #e8eaed;
+  }
+
+  .prose table.drama-info-grid td > div:last-child {
+    flex: 1;
+    min-width: 0;
+    margin: 0 !important;
+    padding: 12px 14px !important;
+    text-align: left !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    line-height: 1.5 !important;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+
+  .prose table.cast-grid,
+  .prose table.cast-grid > :is(thead, tbody),
+  .prose table.cast-grid tr,
+  .prose table.cast-grid td {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .prose table.cast-grid td {
+    margin-bottom: 12px;
   }
 }
 
