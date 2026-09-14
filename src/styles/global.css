@@ -729,6 +729,7 @@ details.faq-item {
 }
 
 .watch-bar {
+  --watch-bar-height: calc(28px + 6px + 1.65em); /* padding + border + line */
   position: sticky;
   bottom: 16px;
   margin-top: 24px;
@@ -1061,6 +1062,11 @@ details.faq-item {
 
   .entry-sidebar {
     display: none;
+  }
+
+  /* Lift sticky CTA above AdSense mobile anchor by one button height */
+  .watch-bar {
+    bottom: calc(16px + var(--watch-bar-height));
   }
 
   .header-inner {
