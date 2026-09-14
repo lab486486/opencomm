@@ -73,39 +73,8 @@ PROMPT_BODY = """
 
 ※ flex/grid 금지. 아래 HTML만 사용. [대괄호]만 치환.
 ※ 데스크톱: 썸네일 약 35% + 오른쪽 2x2
-※ 모바일(600px 이하): 썸네일 위, 정보는 1열로 쌓임
-
-<style>
-@media screen and (max-width: 600px) {
-  .drama-info-wrap,
-  .drama-info-wrap tr,
-  .drama-info-wrap td {
-    display: block !important;
-    width: 100% !important;
-  }
-  .drama-info-thumb {
-    text-align: center;
-    padding: 16px 16px 8px !important;
-  }
-  .drama-info-thumb img {
-    width: 100% !important;
-    max-width: 320px !important;
-    height: auto !important;
-  }
-  .drama-info-grid,
-  .drama-info-grid tr,
-  .drama-info-grid td {
-    display: block !important;
-    width: 100% !important;
-  }
-  .drama-info-grid td {
-    margin-bottom: 8px;
-  }
-  .drama-info-right {
-    padding: 8px 16px 16px !important;
-  }
-}
-</style>
+※ 모바일 반응형 CSS는 사이트 global.css에 있음. <style> 블록을 HTML에 넣지 말 것.
+※ 모바일에서는 썸네일 위 + 아래에 항목명|값 표 형태로 자동 재배치됨.
 
 <table class="drama-info-wrap" style="width:100%; border-collapse:separate; border-spacing:0; background:#fff; border:1px solid #f0f0f0; border-radius:16px; margin:24px 0; box-shadow:0 2px 12px rgba(0,0,0,0.06); table-layout:fixed;">
   <tr>
@@ -268,21 +237,7 @@ PROMPT_BODY = """
 5. 인물이 홀수면 마지막 칸은 비우지 말고, 그 인물 블록만 한 줄에 배치하거나 단독 행으로 둔다
 6. 아래 HTML 구조를 유지하고 [대괄호]와 색상·텍스트만 치환한다
 
-<style>
-@media screen and (max-width: 640px) {
-  .cast-grid,
-  .cast-grid tr,
-  .cast-grid td {
-    display: block !important;
-    width: 100% !important;
-  }
-  .cast-grid td {
-    margin-bottom: 12px;
-  }
-}
-</style>
-
-<!-- 인물 2명 예시: 1행에 td 2개 -->
+<!-- 인물 2명 예시: 1행에 td 2개. 모바일 1열 스택은 global.css 처리. <style> 넣지 말 것. -->
 <table class="cast-grid" style="width:100%; border-collapse:separate; border-spacing:12px; margin:16px 0; table-layout:fixed;">
   <tr>
     <td style="width:50%; background:#f8f9fa; border-radius:14px; padding:16px 18px; vertical-align:top; border:1px solid #f0f0f0;">
