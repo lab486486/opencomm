@@ -1,0 +1,53 @@
+---
+/**
+ * Places the in-article AdSense unit immediately after the first heading
+ * that mentions free viewing (무료 시청… / 시청 방법).
+ * Slot: 오픈컴 본문 H소제목 모바일 (9220098989)
+ */
+const adSlot = '9220098989';
+const label = '오픈컴 본문 H소제목 모바일';
+---
+
+<template id="in-article-heading-ad-tpl">
+  <div class="ad-slot ad-slot-in-article" data-label={label}>
+    <ins
+      class="adsbygoogle"
+      style="display:block"
+      data-ad-client="ca-pub-8094444885520451"
+      data-ad-slot={adSlot}
+      data-ad-format="auto"
+      data-full-width-responsive="true"></ins>
+  </div>
+</template>
+
+<script is:inline>
+  (function placeInArticleHeadingAd() {
+    function run() {
+      var prose = document.querySelector('.prose');
+      var tpl = document.getElementById('in-article-heading-ad-tpl');
+      if (!prose || !tpl || prose.querySelector('.ad-slot-in-article')) return;
+
+      var headings = prose.querySelectorAll('h2, h3');
+      var target = null;
+      for (var i = 0; i < headings.length; i++) {
+        var text = (headings[i].textContent || '').replace(/\s+/g, ' ').trim();
+        // "무료 시청방법", "실시간 무료 시청 방법", "무료로 시청하는 방법" 등
+        if (/무료\s*(로\s*)?시청/.test(text)) {
+          target = headings[i];
+          break;
+        }
+      }
+      if (!target) return;
+
+      var node = tpl.content.firstElementChild.cloneNode(true);
+      target.insertAdjacentElement('afterend', node);
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', run, { once: true });
+    } else {
+      run();
+    }
+  })();
+</script>
