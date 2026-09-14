@@ -70,3 +70,52 @@ export function cardsForBody(
   }
   return out;
 }
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+export function toInternalLinkCardHtml(card: InternalLinkCard): string {
+  const thumb = card.thumbnail
+    ? `<img src="${escapeHtml(card.thumbnail)}" alt="" width="64" height="64" loading="lazy" decoding="async" />`
+    : `<span class="internal-link-card-ph" aria-hidden="true">${escapeHtml((card.title || '?').slice(0, 1))}</span>`;
+  return `<a class="internal-link-card" href="${escapeHtml(card.href)}">${thumb}<span class="internal-link-card-title">${escapeHtml(card.title)}</span></a>`;
+}
+
+/**
+ * Replace bare internal paths in article HTML/markdown body with preview cards.
+ * Handles both lone lines (`/slug/`) and paragraph wrappers (`<p>/slug/</p>`).
+ */
+export function injectInternalLinkCards(
+  body: string,
+  cards: Record<string, InternalLinkCard>,
+): string {
+  if (!body || Object.keys(cards).length === 0) return body;
+
+  const resolve = (raw: string) => cards[raw.trim()] || cards[normalizeInternalPath(raw)] || null;
+
+  let html = body.replace(/<p>\s*(\/[^<>\s]+\/?)\s*<\/p>/gi, (full, path: string) => {
+    if (!isBareInternalPath(path)) return full;
+    const card = resolve(path);
+    return card ? toInternalLinkCardHtml(card) : full;
+  });
+
+  html = html
+    .split(/\r?\n/)
+    .map((line) => {
+      const trimmed = line.trim();
+      if (!isBareInternalPath(trimmed)) return line;
+      // Skip if this line was already turned into a card (contains class).
+      if (line.includes('internal-link-card')) return line;
+      const card = resolve(trimmed);
+      return card ? toInternalLinkCardHtml(card) : line;
+    })
+    .join('\n');
+
+  return html;
+}
