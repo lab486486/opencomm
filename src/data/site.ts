@@ -9,7 +9,7 @@ export const site = {
 export const popularQueries = [
   { label: 'SBS 실시간', query: 'SBS 실시간' },
   { label: 'ENA 실시간', query: 'ENA 실시간' },
-  { label: 'tvN 실시간', query: 'tvN 실시간' },
+  { label: '티비엔 실시간', query: '티비엔 실시간' },
 ];
 
 export const channels = [
