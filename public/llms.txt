@@ -1,0 +1,26 @@
+# 온에어 Live
+
+> 공중파·종편·케이블 공식 온에어 주소와 편성 정보를 안내하는 사이트입니다. 영상을 직접 호스팅하지 않습니다.
+
+사이트: https://opencomm.net/
+
+## 주요 페이지
+
+- [홈 / 통합 검색](https://opencomm.net/)
+- [검색](https://opencomm.net/search/)
+- [개인정보처리방침](https://opencomm.net/privacy/)
+- [사이트맵](https://opencomm.net/sitemap.xml)
+- [RSS](https://opencomm.net/rss)
+
+## 채널 가이드
+
+- [KBS 1TV](https://opencomm.net/kbs1-실시간-온에어/)
+- [KBS 2TV](https://opencomm.net/kbs2-실시간-온에어-편성표/)
+- [MBC](https://opencomm.net/mbc-실시간-온에어/)
+- [SBS](https://opencomm.net/sbs-실시간-온에어/)
+- [JTBC](https://opencomm.net/jtbc-실시간-온에어/)
+- [TV조선](https://opencomm.net/티비조선-실시간-온에어-다시보기/)
+- [채널A](https://opencomm.net/채널에이-실시간-온에어-채널a/)
+- [MBN](https://opencomm.net/mbn-실시간-온에어-다시보기/)
+- [tvN](https://opencomm.net/티비엔-실시간-tvn-온에어/)
+- [ENA](https://opencomm.net/ena-실시간-온에어/)
