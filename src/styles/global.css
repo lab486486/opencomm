@@ -729,11 +729,15 @@ details.faq-item {
 }
 
 .watch-bar {
-  --watch-bar-height: calc(28px + 6px + 1.65em); /* padding + border + line */
+  /* padding + border + line — also used to clear AdSense anchors */
+  --watch-bar-height: calc(28px + 6px + 1.65em);
+  grid-column: 1; /* article column only; do not span sidebar */
   position: sticky;
-  bottom: 16px;
+  /* Sit above AdSense bottom/anchor units on both mobile and PC */
+  bottom: calc(16px + var(--watch-bar-height));
   margin-top: 24px;
   z-index: 20;
+  width: 100%;
   max-width: 100%;
 }
 
@@ -1062,11 +1066,6 @@ details.faq-item {
 
   .entry-sidebar {
     display: none;
-  }
-
-  /* Lift sticky CTA above AdSense mobile anchor by one button height */
-  .watch-bar {
-    bottom: calc(16px + var(--watch-bar-height));
   }
 
   .header-inner {
