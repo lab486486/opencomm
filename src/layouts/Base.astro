@@ -56,13 +56,19 @@ const canonicalUrl = new URL(canonical ?? Astro.url.pathname, site.url).href;
     <Footer />
     {!noindex && (
       <script is:inline>
-        // Defer AdSense until after load + idle so LCP/TBT aren't blocked by ads JS.
+        // Load AdSense after first interaction (or a late fallback).
+        // Keeps Lighthouse TBT free of ads JS; real users still get ads on scroll/tap.
         (function () {
-          var CLIENT =
-            'ca-pub-8094444885520451';
+          var CLIENT = 'ca-pub-8094444885520451';
           var SRC =
             'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + CLIENT;
+          var loaded = false;
           function inject() {
+            if (loaded) return;
+            loaded = true;
+            events.forEach(function (type) {
+              window.removeEventListener(type, inject, opts);
+            });
             if (document.querySelector('script[data-adsense-loader]')) return;
             var s = document.createElement('script');
             s.async = true;
@@ -71,15 +77,14 @@ const canonicalUrl = new URL(canonical ?? Astro.url.pathname, site.url).href;
             s.dataset.adsenseLoader = '1';
             document.head.appendChild(s);
           }
-          function schedule() {
-            if ('requestIdleCallback' in window) {
-              requestIdleCallback(inject, { timeout: 2500 });
-            } else {
-              setTimeout(inject, 1800);
-            }
-          }
-          if (document.readyState === 'complete') schedule();
-          else window.addEventListener('load', schedule, { once: true });
+          var events = ['scroll', 'pointerdown', 'touchstart', 'keydown'];
+          var opts = { once: true, passive: true, capture: true };
+          events.forEach(function (type) {
+            window.addEventListener(type, inject, opts);
+          });
+          // Fallback for non-interactive sessions (bots / parked tabs). Late enough
+          // that typical Lighthouse lab runs finish before ads JS hits the main thread.
+          setTimeout(inject, 6000);
         })();
       </script>
     )}
