@@ -82,7 +82,7 @@ const canonicalUrl = new URL(canonical ?? Astro.url.pathname, site.url).href;
           events.forEach(function (type) {
             window.addEventListener(type, inject, opts);
           });
-          // Passiveout for non-interactive sessions (bots / parked tabs). Late enough
+          // Fallback for non-interactive sessions (bots / parked tabs). Late enough
           // that typical Lighthouse lab runs finish before ads JS hits the main thread.
           setTimeout(inject, 6000);
         })();
