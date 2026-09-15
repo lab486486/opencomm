@@ -6,7 +6,7 @@ import sharp from 'sharp';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SHOWS_DIR = path.join(ROOT, 'src', 'content', 'shows');
 const UPLOADS_DIR = path.join(ROOT, 'public', 'uploads');
-const THUMBS_DIR = path.join(ROOT, 'public', 'thumbs');
+const THUMBS_DIR = path.join(ROOT, 'public', 'thumbs', '640x400');
 /** Match .show-thumb aspect-ratio 16/10 card display size */
 const WIDTH = 640;
 const HEIGHT = 400;
