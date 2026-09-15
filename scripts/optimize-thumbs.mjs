@@ -7,8 +7,10 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SHOWS_DIR = path.join(ROOT, 'src', 'content', 'shows');
 const UPLOADS_DIR = path.join(ROOT, 'public', 'uploads');
 const THUMBS_DIR = path.join(ROOT, 'public', 'thumbs');
+/** Match .show-thumb aspect-ratio 16/10 card display size */
 const WIDTH = 640;
-const QUALITY = 70;
+const HEIGHT = 400;
+const QUALITY = 65;
 
 async function showFiles() {
   const names = await readdir(SHOWS_DIR);
@@ -44,18 +46,28 @@ async function isNewer(target, source) {
   }
 }
 
+async function needsRebuild(dest, source) {
+  try {
+    const meta = await sharp(dest).metadata();
+    if (meta.width !== WIDTH || meta.height !== HEIGHT) return true;
+    return !(await isNewer(dest, source));
+  } catch {
+    return true;
+  }
+}
+
 async function convert(srcUrl) {
   const relative = srcUrl.slice('/uploads/'.length);
   const source = path.join(UPLOADS_DIR, relative);
   const destRel = relative.replace(/\.[^.]+$/, '.webp');
   const dest = path.join(THUMBS_DIR, destRel);
   await ensureDir(path.dirname(dest));
-  if (await isNewer(dest, source)) return 'skip';
+  if (!(await needsRebuild(dest, source))) return 'skip';
   try {
     await sharp(source)
       .rotate()
-      .resize({ width: WIDTH, withoutEnlargement: true })
-      .webp({ quality: QUALITY })
+      .resize({ width: WIDTH, height: HEIGHT, fit: 'cover', position: 'attention' })
+      .webp({ quality: QUALITY, effort: 6 })
       .toFile(dest);
     return 'ok';
   } catch (error) {

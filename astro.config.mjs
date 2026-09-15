@@ -6,6 +6,10 @@ import { showAdminApi } from './admin-api.mjs';
 export default defineConfig({
   site: 'https://opencomm.net',
   trailingSlash: 'always',
+  build: {
+    // Small global CSS — inline to remove the render-blocking stylesheet hop.
+    inlineStylesheets: 'always',
+  },
   integrations: [
     showAdminApi(),
     sitemap({

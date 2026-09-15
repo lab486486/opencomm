@@ -45,13 +45,6 @@ const canonicalUrl = new URL(canonical ?? Astro.url.pathname, site.url).href;
     <meta property="og:url" content={canonicalUrl} />
     {image && <meta property="og:image" content={new URL(image, site.url).href} />}
     {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
-    {!noindex && (
-      <script
-        async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8094444885520451"
-        crossorigin="anonymous"
-      ></script>
-    )}
   </head>
   <body>
     <Header />
@@ -61,5 +54,34 @@ const canonicalUrl = new URL(canonical ?? Astro.url.pathname, site.url).href;
       </div>
     </main>
     <Footer />
+    {!noindex && (
+      <script is:inline>
+        // Defer AdSense until after load + idle so LCP/TBT aren't blocked by ads JS.
+        (function () {
+          var CLIENT =
+            'ca-pub-8094444885520451';
+          var SRC =
+            'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + CLIENT;
+          function inject() {
+            if (document.querySelector('script[data-adsense-loader]')) return;
+            var s = document.createElement('script');
+            s.async = true;
+            s.src = SRC;
+            s.crossOrigin = 'anonymous';
+            s.dataset.adsenseLoader = '1';
+            document.head.appendChild(s);
+          }
+          function schedule() {
+            if ('requestIdleCallback' in window) {
+              requestIdleCallback(inject, { timeout: 2500 });
+            } else {
+              setTimeout(inject, 1800);
+            }
+          }
+          if (document.readyState === 'complete') schedule();
+          else window.addEventListener('load', schedule, { once: true });
+        })();
+      </script>
+    )}
   </body>
 </html>
