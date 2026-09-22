@@ -10,27 +10,51 @@ const { adSlot, label, width, height } = Astro.props;
 const fixed = Boolean(width && height);
 ---
 
+{
+  /*
+   * Placeholder only — <ins class="adsbygoogle"> is inserted client-side when
+   * the click-guard allows loading. Blocked browsers get no ad DOM and no push().
+   */
+}
 <div
   class:list={['ad-slot', { 'ad-slot-fixed': fixed }]}
   data-label={label}
-  style={fixed ? `width:${width}px;height:${height}px` : undefined}
->
-  {fixed ? (
-    <ins
-      class="adsbygoogle"
-      style={`display:inline-block;width:${width}px;height:${height}px`}
-      data-ad-client="ca-pub-8094444885520451"
-      data-ad-slot={adSlot}></ins>
-  ) : (
-    <ins
-      class="adsbygoogle"
-      style="display:block"
-      data-ad-client="ca-pub-8094444885520451"
-      data-ad-slot={adSlot}
-      data-ad-format="auto"
-      data-full-width-responsive="true"></ins>
-  )}
-</div>
+  data-ad-slot={adSlot}
+  data-ad-client="ca-pub-8094444885520451"
+  data-ad-fixed={fixed ? '1' : '0'}
+  data-ad-width={fixed ? String(width) : undefined}
+  data-ad-height={fixed ? String(height) : undefined}
+  data-ad-pending="1"
+  style={fixed ? `width:${width}px;height:${height}px` : undefined}></div>
 <script is:inline>
-  (window.adsbygoogle = window.adsbygoogle || []).push({});
+  (function () {
+    var host = document.currentScript && document.currentScript.previousElementSibling;
+    if (!host || !host.getAttribute || host.getAttribute('data-ad-pending') !== '1') return;
+
+    var api = window.__opencommAds;
+    if (!api || !api.shouldLoad()) {
+      host.remove();
+      return;
+    }
+
+    var fixed = host.getAttribute('data-ad-fixed') === '1';
+    var w = host.getAttribute('data-ad-width');
+    var h = host.getAttribute('data-ad-height');
+    var ins = document.createElement('ins');
+    ins.className = 'adsbygoogle';
+    ins.setAttribute('data-ad-client', host.getAttribute('data-ad-client') || '');
+    ins.setAttribute('data-ad-slot', host.getAttribute('data-ad-slot') || '');
+    if (fixed && w && h) {
+      ins.style.display = 'inline-block';
+      ins.style.width = w + 'px';
+      ins.style.height = h + 'px';
+    } else {
+      ins.style.display = 'block';
+      ins.setAttribute('data-ad-format', 'auto');
+      ins.setAttribute('data-full-width-responsive', 'true');
+    }
+    host.appendChild(ins);
+    host.removeAttribute('data-ad-pending');
+    (window.adsbygoogle = window.adsbygoogle || []).push({});
+  })();
 </script>
