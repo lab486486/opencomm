@@ -3,6 +3,8 @@
  * Places the in-article AdSense unit immediately after the first heading
  * that mentions free viewing (무료 시청… / 시청 방법).
  * Slot: 오픈컴 본문 H소제목 모바일 (9220098989)
+ *
+ * When the invalid-click guard blocks ads, this inserts nothing and never push().
  */
 const adSlot = '9220098989';
 const label = '오픈컴 본문 H소제목 모바일';
@@ -23,6 +25,13 @@ const label = '오픈컴 본문 H소제목 모바일';
 <script is:inline>
   (function placeInArticleHeadingAd() {
     function run() {
+      var api = window.__opencommAds;
+      if (!api || !api.shouldLoad()) {
+        var tplBlocked = document.getElementById('in-article-heading-ad-tpl');
+        if (tplBlocked) tplBlocked.remove();
+        return;
+      }
+
       var prose = document.querySelector('.prose');
       var tpl = document.getElementById('in-article-heading-ad-tpl');
       if (!prose || !tpl || prose.querySelector('.ad-slot-in-article')) return;

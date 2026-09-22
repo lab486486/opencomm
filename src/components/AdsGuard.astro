@@ -1,0 +1,114 @@
+---
+/**
+ * Invalid-traffic guard: estimate ad clicks via hover/touch → window blur,
+ * and block *loading* ads (not just hiding) after 3 hits / 24h (localStorage).
+ *
+ * Exposes window.__opencommAds:
+ *   shouldLoad() → boolean
+ *   isBlocked()  → boolean
+ */
+---
+
+<script is:inline>
+  (function () {
+    var KEY = 'opencomm_ads_click_guard';
+    var WINDOW_MS = 24 * 60 * 60 * 1000;
+    var MAX_CLICKS = 3;
+    var DEBOUNCE_MS = 1200;
+
+    function now() {
+      return Date.now();
+    }
+
+    function readRaw() {
+      try {
+        var raw = localStorage.getItem(KEY);
+        if (!raw) return { count: 0, since: 0 };
+        var parsed = JSON.parse(raw);
+        return {
+          count: Number(parsed && parsed.count) || 0,
+          since: Number(parsed && parsed.since) || 0,
+        };
+      } catch (e) {
+        return { count: 0, since: 0 };
+      }
+    }
+
+    function write(state) {
+      try {
+        localStorage.setItem(
+          KEY,
+          JSON.stringify({ count: state.count, since: state.since })
+        );
+      } catch (e) {
+        /* private mode / quota — fail open for storage write */
+      }
+    }
+
+    /** Reset count/block when the 24h window has elapsed. */
+    function normalize(state) {
+      var t = now();
+      if (!state.since || t - state.since >= WINDOW_MS) {
+        return { count: 0, since: 0 };
+      }
+      return state;
+    }
+
+    function getState() {
+      var prev = readRaw();
+      var state = normalize(prev);
+      if (state.count !== prev.count || state.since !== prev.since) {
+        write(state);
+      }
+      return state;
+    }
+
+    function isBlocked() {
+      return getState().count >= MAX_CLICKS;
+    }
+
+    function shouldLoad() {
+      return !isBlocked();
+    }
+
+    function recordClick() {
+      var state = getState();
+      var t = now();
+      if (!state.since) state.since = t;
+      state.count += 1;
+      write(state);
+      return state;
+    }
+
+    window.__opencommAds = {
+      shouldLoad: shouldLoad,
+      isBlocked: isBlocked,
+      recordClick: recordClick,
+      getState: getState,
+    };
+
+    // --- click estimate: enter .adsbygoogle / .ad-slot → window blur ---
+    var armed = false;
+    var lastRecordAt = 0;
+
+    function armFromEvent(event) {
+      var t = event.target;
+      if (!t || !t.closest) return;
+      if (t.closest('.adsbygoogle') || t.closest('.ad-slot')) {
+        armed = true;
+      }
+    }
+
+    document.addEventListener('mouseover', armFromEvent, true);
+    document.addEventListener('touchstart', armFromEvent, { capture: true, passive: true });
+
+    window.addEventListener('blur', function () {
+      if (!armed) return;
+      armed = false;
+      var t = now();
+      if (t - lastRecordAt < DEBOUNCE_MS) return;
+      lastRecordAt = t;
+      recordClick();
+    });
+  })();
+</script>
