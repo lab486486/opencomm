@@ -3,6 +3,9 @@
  * Invalid-traffic guard: estimate ad clicks via hover/touch → window blur,
  * and block *loading* ads (not just hiding) after 3 hits / 24h (localStorage).
  *
+ * When the 3rd estimate lands on this page, already-rendered ads are removed
+ * immediately (no refresh required).
+ *
  * Exposes window.__opencommAds:
  *   shouldLoad() → boolean
  *   isBlocked()  → boolean
@@ -15,6 +18,7 @@
     var WINDOW_MS = 24 * 60 * 60 * 1000;
     var MAX_CLICKS = 3;
     var DEBOUNCE_MS = 1200;
+    var sessionUnloaded = false;
 
     function now() {
       return Date.now();
@@ -64,11 +68,43 @@
     }
 
     function isBlocked() {
-      return getState().count >= MAX_CLICKS;
+      return sessionUnloaded || getState().count >= MAX_CLICKS;
     }
 
     function shouldLoad() {
       return !isBlocked();
+    }
+
+    /** Tear down any already-shown ads on this page (not CSS hide). */
+    function unloadAdsNow() {
+      if (sessionUnloaded) return;
+      sessionUnloaded = true;
+
+      document.querySelectorAll('.ad-slot, ins.adsbygoogle').forEach(function (el) {
+        el.remove();
+      });
+
+      document
+        .querySelectorAll(
+          'script[data-adsense-loader], script[src*="adsbygoogle.js"], script[src*="pagead2.googlesyndication.com"]'
+        )
+        .forEach(function (el) {
+          el.remove();
+        });
+
+      // Neutralize further pushes for this page session
+      try {
+        window.adsbygoogle = {
+          push: function () {
+            return;
+          },
+        };
+      } catch (e) {
+        /* ignore */
+      }
+
+      var tpl = document.getElementById('in-article-heading-ad-tpl');
+      if (tpl) tpl.remove();
     }
 
     function recordClick() {
@@ -77,6 +113,9 @@
       if (!state.since) state.since = t;
       state.count += 1;
       write(state);
+      if (state.count >= MAX_CLICKS) {
+        unloadAdsNow();
+      }
       return state;
     }
 
@@ -85,13 +124,24 @@
       isBlocked: isBlocked,
       recordClick: recordClick,
       getState: getState,
+      unloadAdsNow: unloadAdsNow,
     };
+
+    // If already over the limit from a previous page, strip any SSR leftovers.
+    if (getState().count >= MAX_CLICKS) {
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', unloadAdsNow, { once: true });
+      } else {
+        unloadAdsNow();
+      }
+    }
 
     // --- click estimate: enter .adsbygoogle / .ad-slot → window blur ---
     var armed = false;
     var lastRecordAt = 0;
 
     function armFromEvent(event) {
+      if (sessionUnloaded) return;
       var t = event.target;
       if (!t || !t.closest) return;
       if (t.closest('.adsbygoogle') || t.closest('.ad-slot')) {
@@ -103,7 +153,7 @@
     document.addEventListener('touchstart', armFromEvent, { capture: true, passive: true });
 
     window.addEventListener('blur', function () {
-      if (!armed) return;
+      if (!armed || sessionUnloaded) return;
       armed = false;
       var t = now();
       if (t - lastRecordAt < DEBOUNCE_MS) return;
